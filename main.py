@@ -5,12 +5,11 @@
 '''
 
 import sqlalchemy
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 from importers.gpx import GPXImporter
 
-engine = sqlalchemy.create_engine('sqlite:///records_v01', echo=True)
-Session = sessionmaker(bind=engine)
-
 if __name__ == '__main__':
-    imp = GPXImporter('Current.gpx', Session)
-    imp.import_gpx(1)
+    engine = sqlalchemy.create_engine('sqlite:///records_v03', echo=True)
+    Sessionmaker = scoped_session(sessionmaker(bind=engine))
+    imp = GPXImporter('Current.gpx', Sessionmaker)
+    imp.save_gpx(1)

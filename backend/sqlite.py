@@ -11,12 +11,12 @@ Base = declarative_base()
 
 
 class TableUserInfo(Base):
-    '''userinfo table'''
-    __tablename__ = 'userinfo'
+    """Table for storing user data"""
+    __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    fname = Column(String)
-    lname = Column(String)
+    firstname = Column(String)
+    lastname = Column(String)
     address = Column(String)
     city = Column(String)
     state = Column(String)
@@ -24,160 +24,206 @@ class TableUserInfo(Base):
     units_type = Column(Boolean)
 
     def __repr__(self):
-        return "USER - id: %s, name: %s %s" % (self.id,  self.fname,  self.lname)
+        return "USER - id: %s, name: %s %s" % (self.id, self.fname, self.lname)
 
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
+
+class TableFix(Base):
+    """Table for storing GPS fix values"""
+    __tablename__ = 'fixes'
+
+    id = Column(Integer, primary_key=True)
+    value = Column(String)
+
+    def __repr__(self):
+        return "FIX - id: %s, value: %s" % (self.id, self.value)
+
+
+class TableGpxxDisplayMode(Base):
+    """Table for storing allowed GPXX display modes (Garmin extension)"""
+    __tablename__ = 'gpxx_displaymodes'
+
+    id = Column(Integer, primary_key=True)
+    value = Column(String)
+
+    def __repr__(self):
+        return "GPXX_DISPLAYMODE - id: %s, value: %s" % (self.id, self.value)
+
+
+class TableGpxxDisplayColor(Base):
+    """Table for storing allowed GPXX display colors (Garmin extension)"""
+    __tablename__ = 'gpxx_displaycolors'
+
+    id = Column(Integer, primary_key=True)
+    value = Column(String)
+
+    def __repr__(self):
+        return "GPXX_DISPLAYCOLOR - id: %s, value: %s" % (self.id, self.value)
 
 
 class TableDevice(Base):
-    '''GPS devices table'''
+    """Table for storing GPS Device info"""
     __tablename__ = 'devices'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    description = Column(String)
-    purchased = Column(String)
+    make = Column(String)
     model = Column(String)
     serial = Column(String)
+    purchase_date = Column(Date)
+    is_active = Column(Boolean)
     data_type = Column(Integer)
 
     def __repr__(self):
-        return "DEVICE - id: %s, name: %s" % (self.id,  self.name)
-
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
+        return "DEVICE - id: %s, make/model: %s/%s" % (self.id, self.make, self.model)
 
 
 class TableTrack(Base):
-    '''GPS tracks table'''
+    """Table for storing GPS Track records"""
     __tablename__ = 'tracks'
 
     id = Column(Integer, primary_key=True)
-    device_id = Column(Integer,  ForeignKey("devices.id"))
+    gpx_id = Column(Integer, ForeignKey("gpxs.id"))
     name = Column(String)
-    description = Column(String)
-    time = Column(String)
-    distance = Column(String)
-    start_time = Column(String)
-    start_lat = Column(String)
-    start_lon = Column(String)
-    end_time = Column(String)
-    end_lat = Column(String)
-    end_lon = Column(String)
-    device = relationship("TableDevice",  backref=backref("tracks"))
+    cmt = Column(String)
+    desc = Column(String)
+    src = Column(String)
+    link_href = Column(String)
+    link_text = Column(String)
+    link_type = Column(String)
+    number = Column(Integer)
+    type = Column(String)
+    gpxx_displaycolor_id = Column(Integer, ForeignKey("gpxx_displaycolors.id"))
+    device = relationship("TableGpx", backref=backref("tracks"))
+    displaycolor = relationship("TableGpxxDisplayColor")
 
     def __repr__(self):
         return "TRACK - id: %s, name: %s" % (self.id,  self.name)
 
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
-
 
 class TableTrackSegment(Base):
-    '''GPS track segments table'''
+    """Table for storing track segment data"""
     __tablename__ = 'track_segments'
 
     id = Column(Integer, primary_key=True)
     track_id = Column(Integer,  ForeignKey("tracks.id"))
-    time = Column(String)
-    distance = Column(String)
-    start_time = Column(String)
-    start_lat = Column(String)
-    start_lon = Column(String)
-    end_time = Column(String)
-    end_lat = Column(String)
-    end_lon = Column(String)
     track = relationship("TableTrack",  backref=backref("segments"))
 
     def __repr__(self):
         return "SEGMENT - id: %s, time: %s" % (self.id,  self.time)
 
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
-
 
 class TableSegmentPoint(Base):
-    '''GPS track segment points table'''
+    """Table for storing segment points data"""
     __tablename__ = 'segment_points'
 
     id = Column(Integer, primary_key=True)
     segment_id = Column(Integer,  ForeignKey("track_segments.id"))
-    time = Column(String)
     lat = Column(String)
     lon = Column(String)
-    symbol = Column(String)
-    comment = Column(String)
-    segment = relationship("TableTrackSegment",  backref=backref("points"))
-
-    def __repr__(self):
-        return "POINT - id: %s, time: %s, lat/lon: %s/%s" % (
-                    self.id,  self.time,  self.lat,  self.lon)
-
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
-
-
-class TableRoute(Base):
-    '''GPS routes table'''
-    __tablename__ = 'routes'
-
-    id = Column(Integer, primary_key=True)
-    device_id = Column(Integer,  ForeignKey("devices.id"))
+    ele = Column(String)
+    time = Column(String)
+    magvar = Column(String)
+    geoidheight = Column(String)
     name = Column(String)
-    description = Column(String)
-    time = Column(String)
-    distance = Column(String)
-    start_time = Column(String)
-    start_lat = Column(String)
-    start_lon = Column(String)
-    end_time = Column(String)
-    end_lat = Column(String)
-    end_lon = Column(String)
-    device = relationship("TableDevice",  backref=backref("routes"))
-
-    def __repr__(self):
-        return "ROUTE - id: %s, name: %s" % (self.id,  self.name)
-
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
-
-
-class TableRoutePoint(Base):
-    '''GPS route points table'''
-    __tablename__ = 'route_points'
-
-    id = Column(Integer, primary_key=True)
-    route_id = Column(Integer,  ForeignKey("routes.id"))
-    time = Column(String)
-    lat = Column(String)
-    lon = Column(String)
-    symbol = Column(String)
-    comment = Column(String)
-    route = relationship("TableRoute",  backref=backref("points"))
+    cmt = Column(String)
+    desc = Column(String)
+    link_href = Column(String)
+    link_text = Column(String)
+    link_type = Column(String)
+    sym = Column(String)
+    type = Column(String)
+    fix_id = Column(Integer, ForeignKey("fixes.id"))
+    sat = Column(Integer)
+    hdop = Column(String)
+    vdop = Column(String)
+    pdop = Column(String)
+    ageofdgpsdata = Column(String)
+    dgpsid = Column(Integer)
+    gpxx_temperature = Column(String)
+    gpxx_depth = Column(String)
+    segment = relationship("TableTrackSegment",  backref=backref("points"))
+    fix = relationship("TableFix")
 
     def __repr__(self):
         return "POINT - id: %s, time: %s, lat/lon: %s/%s" % (
                     self.id,  self.time,  self.lat,  self.lon)
-
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
 
 
 class TableWaypoint(Base):
-    '''GPS waypoints table'''
+    """Table for storing waypoints data"""
     __tablename__ = 'waypoints'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    gpx_id = Column(Integer,  ForeignKey("gpxs.id"))
     lat = Column(String)
     lon = Column(String)
-    symbol = Column(String)
-    comment = Column(String)
+    ele = Column(String)
+    time = Column(String)
+    magvar = Column(String)
+    geoidheight = Column(String)
+    name = Column(String)
+    cmt = Column(String)
+    desc = Column(String)
+    link_href = Column(String)
+    link_text = Column(String)
+    link_type = Column(String)
+    sym = Column(String)
+    type = Column(String)
+    fix_id = Column(Integer, ForeignKey("fixes.id"))
+    sat = Column(Integer)
+    hdop = Column(String)
+    vdop = Column(String)
+    pdop = Column(String)
+    ageofdgpsdata = Column(String)
+    dgpsid = Column(Integer)
+    gpxx_proximity = Column(String)
+    gpxx_temperature = Column(String)
+    gpxx_depth = Column(String)
+    gpxx_displaymode_id = Column(Integer, ForeignKey("gpxx_displaymodes.id"))
+    gpxx_categories = Column(String)
+    gpxx_address_streetaddress = Column(String)
+    gpxx_address_city = Column(String)
+    gpxx_address_state = Column(String)
+    gpxx_address_country = Column(String)
+    gpxx_address_postalcode = Column(String)
+    gpxx_phonenumber = Column(String)
+    gpxx_phonenumber_category = Column(String)
+    segment = relationship("TableGpx",  backref=backref("waypoints"))
+    fix = relationship("TableFix")
+    displaymode = relationship("TableGpxxDisplayMode")
 
     def __repr__(self):
-        return "WAYPOINT - id: %s, name: %s, lat/lon: %s/%s" % (
-                        self.id,  self.name,  self.lat,  self.lon)
+        return "WAYPOINT - id: %s, time: %s, lat/lon: %s/%s" % (
+                    self.id,  self.time,  self.lat,  self.lon)
 
-    def get_last_id(self,  session):
-        return session.query(self).order_by(self.id.desc()).first()
+
+class TableGpx(Base):
+    """Table for storing GPX data"""
+    __tablename__ = 'gpxs'
+
+    id = Column(Integer, primary_key=True)
+    device_id = Column(Integer,  ForeignKey("devices.id"))
+    version = Column(String)
+    creator = Column(String)
+    name = Column(String)
+    desc = Column(String)
+    author_name = Column(String)
+    author_email = Column(String)
+    author_link_href = Column(String)
+    author_link_text = Column(String)
+    author_link_type = Column(String)
+    copyright_author = Column(String)
+    copyright_year = Column(String)
+    copyright_license = Column(String)
+    link_href = Column(String)
+    link_text = Column(String)
+    link_type = Column(String)
+    time = Column(Date)
+    keywords = Column(String)
+    bounds_minlat = Column(String)
+    bounds_minlon = Column(String)
+    bounds_maxlat = Column(String)
+    bounds_maxlon = Column(String)
+    segment = relationship("TableDevice",  backref=backref("gpxs"))
+
+    def __repr__(self):
+        return "GPX - id: %s, name: %s" % (self.id,  self.name)
