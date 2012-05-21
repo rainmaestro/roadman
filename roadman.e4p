@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-4.6.dtd">
 <!-- eric4 project file for project roadman -->
-<!-- Saved: 2012-05-10, 20:00:42 -->
+<!-- Saved: 2012-05-19, 18:10:09 -->
 <!-- Copyright (C) 2012 Zack Townsend, rain.maestro@gmail.com -->
 <Project version="4.6">
   <Language></Language>
@@ -14,6 +14,21 @@
   <Sources>
     <Source>main.py</Source>
     <Source>__init__.py</Source>
+    <Source>importers/__init__.py</Source>
+    <Source>importers/kml.py</Source>
+    <Source>importers/gpx.py</Source>
+    <Source>backend/__init__.py</Source>
+    <Source>backend/sqlite.py</Source>
+    <Source>gpxpy/__init__.py</Source>
+    <Source>gpxpy/geo.py</Source>
+    <Source>gpxpy/parser.py</Source>
+    <Source>gpxpy/utils.py</Source>
+    <Source>gpxpy/gpx.py</Source>
+    <Source>parsers/__init__.py</Source>
+    <Source>formats/__init__.py</Source>
+    <Source>parsers/base.py</Source>
+    <Source>parsers/gpx.py</Source>
+    <Source>formats/gpx.py</Source>
   </Sources>
   <Forms>
   </Forms>

@@ -6,6 +6,11 @@
 
 import sqlalchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
+
+import wxversion
+wxversion.select('2.9')
+import wx
+
 from importers.gpx import GPXImporter
 
 if __name__ == '__main__':

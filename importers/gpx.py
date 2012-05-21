@@ -6,8 +6,6 @@
 from parsers.gpx import GpxXmlParser
 from backend.sqlite import *
 
-#Session = sessionmaker()
-
 
 class GPXImporter:
     """Import data from GPX files. Currently supports v1.1 only."""

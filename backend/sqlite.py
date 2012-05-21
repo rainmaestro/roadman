@@ -187,7 +187,7 @@ class TableWaypoint(Base):
     gpxx_address_postalcode = Column(String)
     gpxx_phonenumber = Column(String)
     gpxx_phonenumber_category = Column(String)
-    segment = relationship("TableGpx",  backref=backref("waypoints"))
+    gpx = relationship("TableGpx",  backref=backref("waypoints"))
     fix = relationship("TableFix")
     displaymode = relationship("TableGpxxDisplayMode")
 
@@ -223,7 +223,7 @@ class TableGpx(Base):
     bounds_minlon = Column(String)
     bounds_maxlat = Column(String)
     bounds_maxlon = Column(String)
-    segment = relationship("TableDevice",  backref=backref("gpxs"))
+    device = relationship("TableDevice",  backref=backref("gpxs"))
 
     def __repr__(self):
         return "GPX - id: %s, name: %s" % (self.id,  self.name)
